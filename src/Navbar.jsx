@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -13,6 +14,19 @@ function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  const navLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/about', label: 'About' },
+    { path: '/skills', label: 'Skills' },
+    { path: '/projects', label: 'Projects' },
+    { path: '/contact', label: 'Contact' },
+  ];
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -27,66 +41,62 @@ function Navbar() {
             A <span className="text-green-700">Growth Hub</span> Project
           </Link>
           
-          {/* Nav Links */}
+          {/* Desktop Nav Links */}
           <div className="hidden md:flex gap-8">
-            <Link 
-              to="/" 
-              className={`transition-colors ${
-                location.pathname === '/' 
-                  ? 'text-blue-500' 
-                  : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/about" 
-              className={`transition-colors ${
-                location.pathname === '/about' 
-                  ? 'text-blue-500' 
-                  : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              About
-            </Link>
-            <Link 
-              to="/skills" 
-              className={`transition-colors ${
-                location.pathname === '/skills' 
-                  ? 'text-blue-500' 
-                  : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              Skills
-            </Link>
-            <Link 
-              to="/projects" 
-              className={`transition-colors ${
-                location.pathname === '/projects' 
-                  ? 'text-blue-500' 
-                  : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              Projects
-            </Link>
-            <Link 
-              to="/contact" 
-              className={`transition-colors ${
-                location.pathname === '/contact' 
-                  ? 'text-blue-500' 
-                  : 'text-gray-300 hover:text-white'
-              }`}
-            >
-              Contact
-            </Link>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.path}
+                to={link.path}
+                className={`transition-colors ${
+                  location.pathname === link.path
+                    ? 'text-blue-500' 
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           {/* Mobile menu button */}
-          <button className="md:hidden text-white">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-white focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              // X icon when menu is open
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              // Hamburger icon when menu is closed
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}>
+          <div className="py-4 space-y-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`block py-2 px-4 rounded transition-colors ${
+                  location.pathname === link.path
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </nav>
