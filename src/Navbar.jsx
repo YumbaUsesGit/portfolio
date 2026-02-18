@@ -20,6 +20,20 @@ function Navbar() {
     setIsMobileMenuOpen(false);
   }, [location]);
 
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
@@ -82,7 +96,7 @@ function Navbar() {
         <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}>
-          <div className="py-4 space-y-3">
+          <div className="py-4 space-y-3 bg-gray-900 rounded-lg mt-4 border border-gray-800">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
